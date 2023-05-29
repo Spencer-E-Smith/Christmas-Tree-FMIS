@@ -27,7 +27,6 @@ lat1 = 40.858654
 long1 = -111.938995
 
 a = []
-b = []
 for i in range(current_df.shape[0]):
     new_dist = pow((pow(abs(current_df.loc[i,"Latitude"] - lat1),2)+ pow(abs(current_df.loc[i,"Longitude"] - long1),2)),.5)
     a.append(new_dist)
