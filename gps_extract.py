@@ -7,6 +7,66 @@ import pandas as pd
 from datetime import datetime
 import tkinter as tk
 import re
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+import numpy as np
+
+aerial_photo_path = 'C:\\Users\\python_account\\Pictures\\farm north.JPG'
+data_save_location = 'C:\\Users\\python_account\\Documents\\project_data\\'
+input_data_path = r'C:\Users\python_account\Pictures\GPS'
+
+
+def display_data(data_list):
+    fig, ax = plt.subplots()
+    def mapping_data(atlas_data):
+        x, y = [], []
+        
+        x.append(atlas_data[1])
+        y.append(atlas_data[2])
+
+        return x, y
+    def add_scatter(x,y, color):
+        ax.scatter(x, y, edgecolor='yellow', zorder=2,)
+    def unique(list1):
+    # initialize a null list
+        unique_list = []
+    # traverse for all elements
+        for x in list1:
+            # check if exists in unique_list or not
+            if x not in unique_list:
+                unique_list.append(x)
+        # print list
+        return unique_list
+    descriptions = []
+    x = []
+    y = []
+    for i in data_list:
+        x.append(i[2])
+        y.append(i[1])
+        descriptions.append(i[0])
+    unique_descriptions = []
+    for i in descriptions:
+        if i not in unique_descriptions:
+            unique_descriptions.append(i)
+    
+    colors = []
+    for i in range(len(unique_descriptions)):
+        colors.append(i/len(unique_descriptions))
+    
+    for i in range(len(colors)):
+        current_x =[]
+        current_y =[]
+        current_color = []
+        for j in range(len(descriptions)):
+            if unique_descriptions[i] == descriptions[j]:
+                current_x.append(x[j])
+                current_y.append(y[j])
+                current_color.append(colors[i])           
+        add_scatter(current_x, current_y, current_color)
+    #ax.scatter(x, y, c=colors, edgecolor = 'red', zorder=2,)
+    ax.imshow(mpimg.imread(aerial_photo_path), extent=(-120.717566420228, -120.71407, 38.7385559849825, 38.74139), zorder=1)
+    plt.legend(unique_descriptions)
+    plt.show()
 
 #create task class
 class task:
@@ -69,7 +129,7 @@ def new_data():
     columns_errors = ['Picture File Path', 'Barcode', 'exif', 'exif_detail']
     picture_df = pd.DataFrame(columns = columns_upload)
     errors_df = pd.DataFrame(columns = columns_errors)
-    root = r'C:\Users\python_account\Pictures\combination_test'
+    root = input_data_path
     image_list = os.listdir(root)
     image_list = [root + '\\' + a  for a in image_list if a.upper().endswith('JPG')]
     #print(image_list)
@@ -86,7 +146,7 @@ def new_data():
                 current_pic.longitude]
         del current_pic
 
-    folder = 'C:\\Users\\python_account\\Documents\\project_data\\'
+    folder = data_save_location
     picture_df.to_csv(folder + 'picturedata' + str(now) + '.csv' )           #   folder + r'\picture_data' + datetime_string + '.csv')
     errors_df.to_csv(folder + 'errors' + str(now) + '.csv')
 
@@ -117,7 +177,30 @@ def remove_closest_task(lat1,long1,current_df):
     current_df.drop(a.index(min(a)),inplace = True)
     current_df.reset_index(drop = True,inplace=True)
     return current_df
-                 
+input_list = [['a',
+  38.74080556,-120.7152111
+],
+ ['b',
+  38.74122778,-120.715225
+]
+,
+ ['c',
+  38.73989444,-120.714875
+]
+,
+ ['d',
+  38.73910278,-120.7173778
+]
+,
+ ['e',
+  38.74096389,-120.7169417
+]
+]
+#input_list = [['a',38.74080556,-120.7152111],['b',38.74122778,-120.715225]['c',38.73989444,-120.714875]['d',38.73910278,-120.7173778]['e',38.74096389,-120.7169417]]
+
+display_data(input_list)
+
+'''                
 root = tk.Tk()
 
 root.title("FMIS")
@@ -137,3 +220,4 @@ path_entry.grid(row=0,column=1)
 submit1.grid(row=0,column=2)
 
 root.mainloop()
+'''
