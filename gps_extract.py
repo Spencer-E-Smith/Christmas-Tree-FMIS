@@ -11,9 +11,9 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import numpy as np
 
-aerial_photo_path = 'C:\\Users\\python_account\\Pictures\\farm north.JPG'
-data_save_location = 'C:\\Users\\python_account\\Documents\\project_data\\'
-input_data_path = r'C:\Users\python_account\Pictures\GPS'
+aerial_photo_path = 'C:\\Users\\spenc\\OneDrive\\Pictures\\farm north.JPG'
+data_save_location = 'C:\\Users\\spenc\\OneDrive\\Documents\\Project Data\\'
+input_data_path = r'C:\Users\spenc\OneDrive\Pictures\Block 9'
 
 
 def display_data(data_list):
@@ -21,8 +21,8 @@ def display_data(data_list):
     def mapping_data(atlas_data):
         x, y = [], []
         
-        x.append(atlas_data[1])
-        y.append(atlas_data[2])
+        x.append(atlas_data[2])
+        y.append(atlas_data[3])
 
         return x, y
     def add_scatter(x,y, color):
@@ -41,9 +41,9 @@ def display_data(data_list):
     x = []
     y = []
     for i in data_list:
-        x.append(i[2])
-        y.append(i[1])
-        descriptions.append(i[0])
+        x.append(i[3])
+        y.append(i[2])
+        descriptions.append(i[1])
     unique_descriptions = []
     for i in descriptions:
         if i not in unique_descriptions:
@@ -66,6 +66,7 @@ def display_data(data_list):
     #ax.scatter(x, y, c=colors, edgecolor = 'red', zorder=2,)
     ax.imshow(mpimg.imread(aerial_photo_path), extent=(-120.717566420228, -120.71407, 38.7385559849825, 38.74139), zorder=1)
     plt.legend(unique_descriptions)
+    plt.savefig('C:\\Users\\spenc\\OneDrive\\Pictures\\block_9.png',dpi = 800)
     plt.show()
 
 #create task class
@@ -166,6 +167,7 @@ def load_newest_file(path):
     current_file = full_names[file_times.index(max(file_times))]
 
     current_df = pd.read_csv(current_file,index_col=0)
+    return current_df
 
 def remove_closest_task(lat1,long1,current_df):
 
@@ -177,6 +179,11 @@ def remove_closest_task(lat1,long1,current_df):
     current_df.drop(a.index(min(a)),inplace = True)
     current_df.reset_index(drop = True,inplace=True)
     return current_df
+
+new_data()
+df = load_newest_file(data_save_location)
+display_data(df.values.tolist())
+'''
 input_list = [['a',
   38.74080556,-120.7152111
 ],
@@ -200,7 +207,7 @@ input_list = [['a',
 
 display_data(input_list)
 
-'''                
+              
 root = tk.Tk()
 
 root.title("FMIS")
