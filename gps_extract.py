@@ -13,7 +13,7 @@ import numpy as np
 
 aerial_photo_path = 'C:\\Users\\spenc\\OneDrive\\Pictures\\farm north.JPG'
 data_save_location = 'C:\\Users\\spenc\\OneDrive\\Documents\\Project Data\\'
-input_data_path = r'C:\Users\spenc\OneDrive\Pictures\Block 9'
+input_data_path = 'C:\\Users\spenc\\OneDrive\\Pictures\\6_18_upload'
 
 
 def display_data(data_list):
@@ -66,7 +66,7 @@ def display_data(data_list):
     #ax.scatter(x, y, c=colors, edgecolor = 'red', zorder=2,)
     ax.imshow(mpimg.imread(aerial_photo_path), extent=(-120.717566420228, -120.71407, 38.7385559849825, 38.74139), zorder=1)
     plt.legend(unique_descriptions)
-    plt.savefig('C:\\Users\\spenc\\OneDrive\\Pictures\\block_9.png',dpi = 800)
+    plt.savefig('C:\\Users\\spenc\\OneDrive\\Pictures\\6_18_map.png',dpi = 800)
     plt.show()
 
 #create task class
