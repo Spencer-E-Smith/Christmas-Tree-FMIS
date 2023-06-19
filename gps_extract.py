@@ -10,6 +10,7 @@ import re
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import numpy as np
+import plotly.express as px
 
 aerial_photo_path = 'C:\\Users\\spenc\\OneDrive\\Pictures\\farm north.JPG'
 data_save_location = 'C:\\Users\\spenc\\OneDrive\\Documents\\Project Data\\'
@@ -180,9 +181,15 @@ def remove_closest_task(lat1,long1,current_df):
     current_df.reset_index(drop = True,inplace=True)
     return current_df
 
-new_data()
+#new_data()
 df = load_newest_file(data_save_location)
-display_data(df.values.tolist())
+#display_data(df.values.tolist())
+
+fig = px.bar(df.groupby('Task Type').count(), x= 'Task Type', y = 'Latitude')
+
+fig.show()
+
+
 '''
 input_list = [['a',
   38.74080556,-120.7152111
