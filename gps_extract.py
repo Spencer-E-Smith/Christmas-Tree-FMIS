@@ -14,10 +14,17 @@ import plotly.express as px
 
 aerial_photo_path = 'C:\\Users\\spenc\\OneDrive\\Pictures\\farm north.JPG'
 data_save_location = 'C:\\Users\\spenc\\OneDrive\\Documents\\Project Data\\'
-input_data_path = 'C:\\Users\spenc\\OneDrive\\Pictures\\6_18_upload'
+input_data_path = 'C:\\Users\spenc\\OneDrive\\Pictures\\final upload'
 
 
-def display_data(data_list):
+def display_data(data_list, subset):
+    temp_list = []
+    if len(subset) != 0:
+        for i in data_list:
+            if i[1] in subset:
+                temp_list.append(i)
+        data_list = temp_list
+
     fig, ax = plt.subplots()
     def mapping_data(atlas_data):
         x, y = [], []
@@ -114,15 +121,22 @@ def img_coords(f_name):
         return ['error', 'no exif', None]
     #print(f"Image {src.name}, was taken: {img.datetime_original}, and has coordinates: {coords}")
 
+def barcode_error_fixing(picture_path,error_code):
+    if '(' in os.path.basename(picture_path):
+        name = os.path.basename(picture_path)
+        return name[name.find('(')+1:name.find(')')]
+    else:
+        return error_code
+
 def read_barcode(picture_path):
     im = cv2.imread(picture_path, cv2.IMREAD_GRAYSCALE)
     blur = cv2.GaussianBlur(im, (5, 5), 0)
     ret, bw_im = cv2.threshold(blur, 120, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
     barcode_info = decode(bw_im)#, symbols=[ZBarSymbol.CODE128])
     if barcode_info == []:
-        return "error: no barcode found"
+        return barcode_error_fixing(picture_path,"error: no barcode found")
     elif len(barcode_info) > 1:
-        return "error: multiple barcodes"
+        return barcode_error_fixing(picture_path,"error: multiple barcodes")
     else:
         return barcode_info[0].data.decode("utf-8")
 
@@ -183,10 +197,10 @@ def remove_closest_task(lat1,long1,current_df):
 
 #new_data()
 df = load_newest_file(data_save_location)
-#display_data(df.values.tolist())
+display_data(df.values.tolist(),[])
 
-fig = px.bar(df.groupby('Task Type').count(), x= 'Task Type', y = 'Latitude')
-
+fig = px.bar(df.groupby('Task Type').count().reset_index(level = 0), x= 'Task Type', y = 'Latitude')
+fig.update_layout(barmode='stack', xaxis={'categoryorder':'total descending'})
 fig.show()
 
 
