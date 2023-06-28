@@ -17,6 +17,7 @@ data_save_location = 'C:\\Users\\spenc\\OneDrive\\Documents\\Project Data\\'
 input_data_path = 'C:\\Users\spenc\\OneDrive\\Pictures\\final upload'
 
 
+
 def display_data(data_list, subset):
     temp_list = []
     if len(subset) != 0:
@@ -196,12 +197,13 @@ def remove_closest_task(lat1,long1,current_df):
     return current_df
 
 #new_data()
-df = load_newest_file(data_save_location)
-display_data(df.values.tolist(),[])
+#df = load_newest_file(data_save_location)
+#display_data(df.values.tolist(),[])
 
-fig = px.bar(df.groupby('Task Type').count().reset_index(level = 0), x= 'Task Type', y = 'Latitude')
-fig.update_layout(barmode='stack', xaxis={'categoryorder':'total descending'})
-fig.show()
+def create_bar_chart(df):
+    fig = px.bar(df.groupby('Task Type').count().reset_index(level = 0), x= 'Task Type', y = 'Latitude')
+    fig.update_layout(barmode='stack', xaxis={'categoryorder':'total descending'})
+    fig.show()
 
 
 '''
@@ -227,25 +229,43 @@ input_list = [['a',
 #input_list = [['a',38.74080556,-120.7152111],['b',38.74122778,-120.715225]['c',38.73989444,-120.714875]['d',38.73910278,-120.7173778]['e',38.74096389,-120.7169417]]
 
 display_data(input_list)
-
+'''
               
 root = tk.Tk()
+
+
 
 root.title("FMIS")
 
 path_label = tk.Label(root,text = "Enter Path for Data Storage")
-
-default_path = "C:\\Users\\python_account\\Documents\\project_data"
 file_path = tk.StringVar()
-file_path.set(default_path)
+file_path.set(data_save_location)
 
 path_entry = tk.Entry(root, textvariable= file_path, width= 100)
+thing = tk.StringVar()
+thing.set("this is the print location")
+print_location = tk.Entry(root,textvariable=thing, width = 50)
 
-submit1 = tk.Button(root, text = "Submit", command = root.destroy)
+def print_thing():
+    thing.set(data_save_location)
+def set_aerial_photo_path(path):
+    global aerial_photo_path
+    aerial_photo_path = path
+def set_data_save_location():
+    global data_save_location
+    data_save_location = file_path.get()
+def set_input_data_path(path):
+    global input_data_path
+    input_data_path = path
+
+submit1 = tk.Button(root, text = "Submit", command = set_data_save_location)
+
+print_button = tk.Button(root, text = "Print Thing", command = print_thing)
 
 path_label.grid(row=0,column=0)
 path_entry.grid(row=0,column=1)
 submit1.grid(row=0,column=2)
+print_button.grid(row=1,column=0)
+print_location.grid(row=1,column=1)
 
 root.mainloop()
-'''
