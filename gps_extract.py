@@ -237,35 +237,56 @@ root = tk.Tk()
 
 root.title("FMIS")
 
-path_label = tk.Label(root,text = "Enter Path for Data Storage")
-file_path = tk.StringVar()
-file_path.set(data_save_location)
+save_path_label = tk.Label(root,text = "Enter Path for Data Storage")
+save_file_path = tk.StringVar()
+save_file_path.set(data_save_location)
 
-path_entry = tk.Entry(root, textvariable= file_path, width= 100)
+aerial_path_label = tk.Label(root,text = "Enter Path for Aerial Photo")
+aerial_file_path = tk.StringVar()
+aerial_file_path.set(aerial_photo_path)
+
+input_path_label = tk.Label(root,text = "Enter Path for Input Pictures")
+input_file_path = tk.StringVar()
+input_file_path.set(input_data_path)
+
+save_path_entry = tk.Entry(root, textvariable= save_file_path, width= 100)
+aerial_file_entry = tk.Entry(root, textvariable= aerial_file_path, width= 100)
+input_path_entry = tk.Entry(root, textvariable= input_file_path, width= 100)
+
 thing = tk.StringVar()
 thing.set("this is the print location")
 print_location = tk.Entry(root,textvariable=thing, width = 50)
 
 def print_thing():
-    thing.set(data_save_location)
-def set_aerial_photo_path(path):
+    thing.set(input_data_path)
+def set_aerial_photo_path():
     global aerial_photo_path
-    aerial_photo_path = path
+    aerial_photo_path = aerial_file_path.get()
 def set_data_save_location():
     global data_save_location
-    data_save_location = file_path.get()
-def set_input_data_path(path):
+    data_save_location = save_file_path.get()
+def set_input_data_path():
     global input_data_path
-    input_data_path = path
+    input_data_path = input_file_path.get()
 
-submit1 = tk.Button(root, text = "Submit", command = set_data_save_location)
+submit_save = tk.Button(root, text = "Submit", command = set_data_save_location)
+submit_aerial = tk.Button(root, text = "Submit", command = set_aerial_photo_path)
+submit_input = tk.Button(root, text = "Submit", command = set_input_data_path)
+run_input = tk.Button(root, text = "Upload New Pictures", command = new_data)
 
 print_button = tk.Button(root, text = "Print Thing", command = print_thing)
 
-path_label.grid(row=0,column=0)
-path_entry.grid(row=0,column=1)
-submit1.grid(row=0,column=2)
-print_button.grid(row=1,column=0)
-print_location.grid(row=1,column=1)
+save_path_label.grid(row=0,column=0)
+save_path_entry.grid(row=0,column=1)
+submit_save.grid(row=0,column=2)
+aerial_path_label.grid(row=1,column=0)
+aerial_file_entry.grid(row=1,column=1)
+submit_aerial.grid(row=1,column=2)
+input_path_label.grid(row=2,column=0)
+input_path_entry.grid(row=3,column=1)
+submit_input.grid(row=3,column=2)
+run_input.grid(row=3,column=3)
+print_button.grid(row=4,column=0)
+print_location.grid(row=4,column=1)
 
 root.mainloop()
