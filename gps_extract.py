@@ -197,8 +197,10 @@ def remove_closest_task(lat1,long1,current_df):
     return current_df
 
 #new_data()
-#df = load_newest_file(data_save_location)
-#display_data(df.values.tolist(),[])
+def load_data_func():
+    df = load_newest_file(data_save_location)
+    display_data(df.values.tolist(),[])
+    create_bar_chart(df)
 
 def create_bar_chart(df):
     fig = px.bar(df.groupby('Task Type').count().reset_index(level = 0), x= 'Task Type', y = 'Latitude')
@@ -273,7 +275,7 @@ submit_save = tk.Button(root, text = "Submit", command = set_data_save_location)
 submit_aerial = tk.Button(root, text = "Submit", command = set_aerial_photo_path)
 submit_input = tk.Button(root, text = "Submit", command = set_input_data_path)
 run_input = tk.Button(root, text = "Upload New Pictures", command = new_data)
-
+load_data = tk.Button(root, text = "Load Latest Data", command = load_data_func)
 print_button = tk.Button(root, text = "Print Thing", command = print_thing)
 
 save_path_label.grid(row=0,column=0)
@@ -283,9 +285,10 @@ aerial_path_label.grid(row=1,column=0)
 aerial_file_entry.grid(row=1,column=1)
 submit_aerial.grid(row=1,column=2)
 input_path_label.grid(row=2,column=0)
-input_path_entry.grid(row=3,column=1)
-submit_input.grid(row=3,column=2)
-run_input.grid(row=3,column=3)
+input_path_entry.grid(row=2,column=1)
+submit_input.grid(row=2,column=2)
+run_input.grid(row=3,column=0)
+load_data.grid(row=3,column=1)
 print_button.grid(row=4,column=0)
 print_location.grid(row=4,column=1)
 
