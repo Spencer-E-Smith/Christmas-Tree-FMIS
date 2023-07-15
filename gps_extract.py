@@ -12,6 +12,7 @@ import matplotlib.image as mpimg
 import numpy as np
 import plotly.express as px
 
+task_subset = []
 aerial_photo_path = 'C:\\Users\\spenc\\OneDrive\\Pictures\\farm north.JPG'
 data_save_location = 'C:\\Users\\spenc\\OneDrive\\Documents\\Project Data\\'
 input_data_path = 'C:\\Users\spenc\\OneDrive\\Pictures\\final upload'
@@ -75,8 +76,10 @@ def display_data(data_list, subset):
     #ax.scatter(x, y, c=colors, edgecolor = 'red', zorder=2,)
     ax.imshow(mpimg.imread(aerial_photo_path), extent=(-120.717566420228, -120.71407, 38.7385559849825, 38.74139), zorder=1)
     plt.legend(unique_descriptions)
-    plt.savefig('C:\\Users\\spenc\\OneDrive\\Pictures\\6_18_map.png',dpi = 800)
+    save_file_name = data_save_location + 'map' +str(datetime.now().timestamp())+ '.png'
+    plt.savefig(save_file_name,dpi = 800)
     plt.show()
+    
 
 #create task class
 class task:
@@ -199,7 +202,7 @@ def remove_closest_task(lat1,long1,current_df):
 #new_data()
 def load_data_func():
     df = load_newest_file(data_save_location)
-    display_data(df.values.tolist(),[])
+    display_data(df.values.tolist(),task_subset)
     create_bar_chart(df)
 
 def create_bar_chart(df):
@@ -247,6 +250,10 @@ aerial_path_label = tk.Label(root,text = "Enter Path for Aerial Photo")
 aerial_file_path = tk.StringVar()
 aerial_file_path.set(aerial_photo_path)
 
+task_subset_label = tk.Label(root,text = "Enter List of Tasks to Include")
+task_subset_input = tk.StringVar()
+task_subset_input.set("")
+
 input_path_label = tk.Label(root,text = "Enter Path for Input Pictures")
 input_file_path = tk.StringVar()
 input_file_path.set(input_data_path)
@@ -254,6 +261,7 @@ input_file_path.set(input_data_path)
 save_path_entry = tk.Entry(root, textvariable= save_file_path, width= 100)
 aerial_file_entry = tk.Entry(root, textvariable= aerial_file_path, width= 100)
 input_path_entry = tk.Entry(root, textvariable= input_file_path, width= 100)
+task_subset_entry = tk.Entry(root, textvariable= task_subset_input, width= 100)
 
 thing = tk.StringVar()
 thing.set("this is the print location")
@@ -264,6 +272,9 @@ def print_thing():
 def set_aerial_photo_path():
     global aerial_photo_path
     aerial_photo_path = aerial_file_path.get()
+def set_task_subset():
+    global task_subset
+    task_subset = task_subset_input.get().split(', ')
 def set_data_save_location():
     global data_save_location
     data_save_location = save_file_path.get()
@@ -274,6 +285,7 @@ def set_input_data_path():
 submit_save = tk.Button(root, text = "Submit", command = set_data_save_location)
 submit_aerial = tk.Button(root, text = "Submit", command = set_aerial_photo_path)
 submit_input = tk.Button(root, text = "Submit", command = set_input_data_path)
+submit_subset = tk.Button(root, text = "Submit", command = set_task_subset)
 run_input = tk.Button(root, text = "Upload New Pictures", command = new_data)
 load_data = tk.Button(root, text = "Load Latest Data", command = load_data_func)
 print_button = tk.Button(root, text = "Print Thing", command = print_thing)
@@ -287,9 +299,12 @@ submit_aerial.grid(row=1,column=2)
 input_path_label.grid(row=2,column=0)
 input_path_entry.grid(row=2,column=1)
 submit_input.grid(row=2,column=2)
-run_input.grid(row=3,column=0)
-load_data.grid(row=3,column=1)
-print_button.grid(row=4,column=0)
-print_location.grid(row=4,column=1)
+task_subset_label.grid(row=3,column=0)
+task_subset_entry.grid(row=3,column=1)
+submit_subset.grid(row=3,column=2)
+run_input.grid(row=4,column=0)
+load_data.grid(row=4,column=1)
+#print_button.grid(row=4,column=0)
+#print_location.grid(row=4,column=1)
 
 root.mainloop()
