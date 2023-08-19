@@ -238,7 +238,7 @@ display_data(input_list)
               
 root = tk.Tk()
 
-
+root.iconbitmap(r"C:\Users\spenc\Christmas-Tree-FMIS\tree_icon.ico")
 
 root.title("FMIS")
 
