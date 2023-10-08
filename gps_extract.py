@@ -1,7 +1,7 @@
 import os
 from exif import Image
 from pyzbar.pyzbar import decode
-from pyzbar.pyzbar import ZBarSymbol
+#from pyzbar.pyzbar import ZBarSymbol
 import cv2
 import pandas as pd
 from datetime import datetime
@@ -9,7 +9,7 @@ import tkinter as tk
 import re
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
-import numpy as np
+#import numpy as np
 import plotly.express as px
 
 task_subset = []
@@ -28,25 +28,8 @@ def display_data(data_list, subset):
         data_list = temp_list
 
     fig, ax = plt.subplots()
-    def mapping_data(atlas_data):
-        x, y = [], []
-        
-        x.append(atlas_data[2])
-        y.append(atlas_data[3])
-
-        return x, y
     def add_scatter(x,y, color):
         ax.scatter(x, y, edgecolor='yellow', zorder=2,)
-    def unique(list1):
-    # initialize a null list
-        unique_list = []
-    # traverse for all elements
-        for x in list1:
-            # check if exists in unique_list or not
-            if x not in unique_list:
-                unique_list.append(x)
-        # print list
-        return unique_list
     descriptions = []
     x = []
     y = []
@@ -74,16 +57,20 @@ def display_data(data_list, subset):
                 current_color.append(colors[i])           
         add_scatter(current_x, current_y, current_color)
     #ax.scatter(x, y, c=colors, edgecolor = 'red', zorder=2,)
-    ax.imshow(mpimg.imread(aerial_photo_path), extent=(-120.717566420228, -120.71407, 38.7385559849825, 38.74139), zorder=1)
+    ax.imshow(mpimg.imread(aerial_photo_path), \
+              extent=(-120.717566420228, -120.71407,\
+                       38.7385559849825, 38.74139), zorder=1)
     plt.legend(unique_descriptions)
-    save_file_name = data_save_location + 'map' +str(datetime.now().timestamp())+ '.png'
+    save_file_name = data_save_location +\
+          'map' +str(datetime.now().timestamp())+ '.png'
     plt.savefig(save_file_name,dpi = 800)
     plt.show()
     
 
 #create task class
 class task:
-    def __init__(self, file_path, task_type, latitude, longitude, date_picture_taken, date_picture_processed):
+    def __init__(self, file_path, task_type, latitude,\
+                  longitude, date_picture_taken, date_picture_processed):
         self.file_path = file_path
         self.task_type = task_type
         self.latitude = latitude
@@ -118,7 +105,9 @@ def img_coords(f_name):
     if img.has_exif:
         try:
             img.gps_longitude
-            return [decimal_coords(img.gps_latitude, img.gps_latitude_ref), decimal_coords(img.gps_longitude, img.gps_longitude_ref), img.datetime_original]
+            return [decimal_coords(img.gps_latitude, img.gps_latitude_ref),\
+                    decimal_coords(img.gps_longitude, img.gps_longitude_ref)\
+                        , img.datetime_original]
         except Exception as e:
             return ['error during exif read', e, None]
     else:
@@ -135,7 +124,8 @@ def barcode_error_fixing(picture_path,error_code):
 def read_barcode(picture_path):
     im = cv2.imread(picture_path, cv2.IMREAD_GRAYSCALE)
     blur = cv2.GaussianBlur(im, (5, 5), 0)
-    ret, bw_im = cv2.threshold(blur, 120, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+    ret, bw_im = cv2.threshold(blur, 120, 255,\
+                                cv2.THRESH_BINARY+cv2.THRESH_OTSU)
     barcode_info = decode(bw_im)#, symbols=[ZBarSymbol.CODE128])
     if barcode_info == []:
         return barcode_error_fixing(picture_path,"error: no barcode found")
@@ -145,48 +135,38 @@ def read_barcode(picture_path):
         return barcode_info[0].data.decode("utf-8")
 
 def new_data():
-    columns_upload = ['Picture File Path', 'Task Type', 'Latitude', 'Longitude', 'Date Picture Taken', 'Date Picture Processed']
-    columns_errors = ['Picture File Path', 'Barcode', 'exif', 'exif_detail']
+    columns_upload = ['Picture File Path', 'Task Type', 'Latitude',\
+                       'Longitude', 'Date Picture Taken',\
+                          'Date Picture Processed']
+    columns_errors = \
+        ['Picture File Path', 'Barcode', 'exif', 'exif_detail']
     picture_df = pd.DataFrame(columns = columns_upload)
     errors_df = pd.DataFrame(columns = columns_errors)
     root = input_data_path
     image_list = os.listdir(root)
-    image_list = [root + '\\' + a  for a in image_list if a.upper().endswith('JPG')]
+    image_list = \
+        [root + '\\' + a  for a in image_list if a.upper().endswith('JPG')]
     #print(image_list)
     now = datetime.now().timestamp()
     for a in image_list:
         barcode_string = read_barcode(a)
         exif_list = img_coords(a)
-        current_pic = task(a,barcode_string, exif_list[0], exif_list[1], exif_list[2], now)
+        current_pic = task(a,barcode_string, exif_list[0],\
+                            exif_list[1], exif_list[2], now)
         if current_pic.valid():
-            picture_df.loc[picture_df.shape[0]] = [current_pic.file_path, current_pic.task_type, current_pic.latitude,\
-                                            current_pic.longitude, current_pic.date_picture_taken, now]
+            picture_df.loc[picture_df.shape[0]] = \
+                [current_pic.file_path, current_pic.task_type,\
+                  current_pic.latitude, current_pic.longitude, \
+                    current_pic.date_picture_taken, now]
         else:
-            errors_df.loc[errors_df.shape[0]] = [current_pic.file_path, current_pic.task_type, current_pic.latitude,\
-                current_pic.longitude]
+            errors_df.loc[errors_df.shape[0]] =\
+                  [current_pic.file_path, current_pic.task_type,\
+                    current_pic.latitude, current_pic.longitude]
         del current_pic
 
     folder = data_save_location
-    picture_df.to_csv(folder + 'picturedata' + str(now) + '.csv' )           #   folder + r'\picture_data' + datetime_string + '.csv')
+    picture_df.to_csv(folder + 'picturedata' + str(now) + '.csv' )
     errors_df.to_csv(folder + 'errors' + str(now) + '.csv')
-
-def load_newest_file(path):
-    full_names = []
-    file_times = []
-
-    for filename in os.listdir(path):
-        full_name = os.path.join(path,filename)
-        if filename.endswith(".csv") and "picturedata" in filename and os.path.isfile(full_name):
-            ts_list = re.findall(r'\d+',filename)
-            ts = ts_list[0] + "." + ts_list[1]
-            file_time = float(ts)
-            full_names.append(full_name)
-            file_times.append(file_time)
-
-    current_file = full_names[file_times.index(max(file_times))]
-
-    current_df = pd.read_csv(current_file,index_col=0)
-    return current_df
 
 def remove_closest_task(lat1,long1,current_df):
 
@@ -199,15 +179,36 @@ def remove_closest_task(lat1,long1,current_df):
     current_df.reset_index(drop = True,inplace=True)
     return current_df
 
-#new_data()
+def load_newest_file(path):
+    full_names = []
+    file_times = []
+
+    for filename in os.listdir(path):
+        full_name = os.path.join(path,filename)
+        if filename.endswith(".csv") and "picturedata"\
+              in filename and os.path.isfile(full_name):
+            ts_list = re.findall(r'\d+',filename)
+            ts = ts_list[0] + "." + ts_list[1]
+            file_time = float(ts)
+            full_names.append(full_name)
+            file_times.append(file_time)
+
+    current_file = full_names[file_times.index(max(file_times))]
+
+    current_df = pd.read_csv(current_file,index_col=0)
+    return current_df
+
 def load_data_func():
     df = load_newest_file(data_save_location)
     display_data(df.values.tolist(),task_subset)
     create_bar_chart(df)
 
 def create_bar_chart(df):
-    fig = px.bar(df.groupby('Task Type').count().reset_index(level = 0), x= 'Task Type', y = 'Latitude')
-    fig.update_layout(barmode='stack', xaxis={'categoryorder':'total descending'})
+    fig = px.bar(df.groupby('Task Type').count().reset_index(level = 0),\
+                  x= 'Task Type', y = 'Latitude')
+    fig.update_layout(barmode='stack',\
+                       xaxis={'categoryorder':'total descending'}\
+                        ,yaxis_title = "Count")
     fig.show()
 
 
@@ -282,12 +283,18 @@ def set_input_data_path():
     global input_data_path
     input_data_path = input_file_path.get()
 
-submit_save = tk.Button(root, text = "Submit", command = set_data_save_location)
-submit_aerial = tk.Button(root, text = "Submit", command = set_aerial_photo_path)
-submit_input = tk.Button(root, text = "Submit", command = set_input_data_path)
-submit_subset = tk.Button(root, text = "Submit", command = set_task_subset)
-run_input = tk.Button(root, text = "Upload New Pictures", command = new_data)
-load_data = tk.Button(root, text = "Load Latest Data", command = load_data_func)
+submit_save = tk.Button(root, text = "Submit",\
+                         command = set_data_save_location)
+submit_aerial = tk.Button(root, text = "Submit",\
+                           command = set_aerial_photo_path)
+submit_input = tk.Button(root, text = "Submit",\
+                          command = set_input_data_path)
+submit_subset = tk.Button(root, text = "Submit",\
+                           command = set_task_subset)
+run_input = tk.Button(root, text = "Upload New Pictures",\
+                       command = new_data)
+load_data = tk.Button(root, text = "Load Latest Data",\
+                       command = load_data_func)
 print_button = tk.Button(root, text = "Print Thing", command = print_thing)
 
 save_path_label.grid(row=0,column=0)
